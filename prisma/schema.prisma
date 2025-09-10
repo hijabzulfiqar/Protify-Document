@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum DocumentCategory {
+  resume
+  degrees
+  certificates
+  transcripts
+  headshots
+  others
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  fullName  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  documents Document[]
+  
+  @@map("users")
+}
+
+model Document {
+  id           String           @id @default(cuid())
+  fileName     String
+  originalName String
+  fileSize     Int
+  mimeType     String
+  category     DocumentCategory
+  fileUrl      String
+  uploadedAt   DateTime         @default(now())
+  
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("documents")
+}
