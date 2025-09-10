@@ -11,7 +11,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 export const supabaseAdmin = supabaseServiceRoleKey 
-  ? createClient(supabaseUrl, supabaseServiceRoleKey, {
+  ? createClient(supabaseUrl!, supabaseServiceRoleKey, {
       auth: {
         autoRefreshToken: false,
         persistSession: false
@@ -21,6 +21,10 @@ export const supabaseAdmin = supabaseServiceRoleKey
 
 // Create a server-side client that can work with user tokens
 export function createSupabaseServerClient(token: string) {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error('Missing Supabase environment variables')
+  }
+  
   return createClient(supabaseUrl, supabaseAnonKey, {
     global: {
       headers: {
